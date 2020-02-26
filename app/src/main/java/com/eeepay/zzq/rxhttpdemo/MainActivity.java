@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setDecoderCode();
 
     }
+
     //设置数据解密/解码器
     private void setDecoderCode() {
         /**
