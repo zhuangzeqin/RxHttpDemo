@@ -17,6 +17,7 @@ import java.util.HashMap;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import rxhttp.wrapper.param.Method;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
 
@@ -133,8 +134,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setDecoderCode();
+        //设置公共参数，请求头
+        setPubParam();
 
+    }
+    //设置公共参数，请求头
+    //我们需要调用RxHttp.setOnParamAssembly(Function)方法，并传入一个Function接口对象，每次发起请求，都会回调该接口。
+    private void setPubParam() {
+        RxHttp.setOnParamAssembly(param -> {//此方法在子线程中执行，即请求发起线程
+            Method method = param.getMethod();
+            if (method.isGet()) {     //可根据请求类型添加不同的参数
+                //get 请求
+            } else if (method.isPost()) {
+                //post 请求
+            }
+            param.add("token", "147258369");//添加公共参数
+            param.addHeader("device", "android");//添加公共请求头
+            return param;
+        });
+
+//        如果希望某个请求不回调该接口，即不添加公共参数/请求头，则可以调用setAssemblyEnabled(boolean)方法，并传入false即可，如下：
+        RxHttp.postForm("url").setAssemblyEnabled(false)//设置是否添加公共参数/头部，默认为true
+                .asString()
+                .as(RxLife.asOnMain(this))
+                .subscribe(s -> {
+                    Log.d("RxHttp", "回调成功" + s);
+                }, throwable -> {
+                    Log.d("RxHttp", "回调失败" + throwable.getMessage());
+                });
     }
 
     //设置数据解密/解码器
@@ -184,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!disposable.isDisposed()) {
             disposable.dispose(); //没有结束，则关闭请求
         }
-
         //自动关闭；自动关闭请求，需要引入本人开源的另一个库RxLife
         //as(RxLife.as(this)) //页面销毁、自动关闭请求
         //as(RxLife.asOnMain(this)) //页面销毁、自动关闭请求 并且在主线程回调观察者
