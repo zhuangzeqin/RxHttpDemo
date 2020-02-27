@@ -42,9 +42,9 @@ dependencies {
     //if you use AndroidX
 //    implementation 'com.rxjava.rxlife:rxlife-x:1.1.0'
     //Converter 根据自己需求选择  非必须  RxHttp默认内置了GsonConverter
-    implementation 'com.rxjava.rxhttp:converter-jackson:1.4.2'
-    implementation 'com.rxjava.rxhttp:converter-fastjson:1.4.2'
-    implementation 'com.rxjava.rxhttp:converter-protobuf:1.4.2'
-    implementation 'com.rxjava.rxhttp:converter-simplexml:1.4.2'
+//    implementation 'com.rxjava.rxhttp:converter-jackson:1.4.2'
+//    implementation 'com.rxjava.rxhttp:converter-fastjson:1.4.2'
+//    implementation 'com.rxjava.rxhttp:converter-protobuf:1.4.2'
+//    implementation 'com.rxjava.rxhttp:converter-simplexml:1.4.2'
     //********************************end*************RXHttp 框架所需要的一些类库*********end*************************************
 }

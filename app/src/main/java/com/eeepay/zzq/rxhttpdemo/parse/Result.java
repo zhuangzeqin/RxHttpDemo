@@ -1,7 +1,7 @@
 package com.eeepay.zzq.rxhttpdemo.parse;
 
 /**
- * 描述：class describe
+ * 描述：后台统一的数据格式封装
  * 作者：zhuangzeqin
  * 时间: 2020/2/26-17:41
  * 邮箱：zzq@eeepay.cn
@@ -9,6 +9,8 @@ package com.eeepay.zzq.rxhttpdemo.parse;
  */
 public class Result<T> {
     private int errorCode;
+    private String errorMsg;
+    private T data;
 
     public int getErrorCode() {
         return errorCode;
@@ -34,6 +36,5 @@ public class Result<T> {
         this.data = data;
     }
 
-    private String errorMsg;
-    private T data;
+
 }

@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hashMap.put("timestamp", "1462377600");
         hashMap.put("type", 1);
         hashMap.put("client", "ceshi");
-        RxHttp.get("calendar/vacations").
+        RxHttp.postEncryptForm("calendar/vacations").test(88,78).
                 add("token", "A2E0C3CDEA081D3BFC34F8FE23A15886").//通过add 方式添加参数
                 addAll(hashMap).//也可以通过map 添加参数
                 asString().
@@ -98,10 +98,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_test:
-//                getTestInfo1();
+                getTestInfo1();
 //                Presenter.with(this).build().reqestTestModel();
 //                setDomainUrl();
-                getAriticle();
+//                getAriticle();
                 break;
             default:
 
@@ -114,11 +114,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private void getAriticle() {
         //多个占位符n$标识占位符的顺序如何请求(单个占位符%d即可)
+//        RxHttp.get("wxarticle/list/%1$d/%2$d/json", 480, 1).setDomainTozzqIfAbsent()
+//                .asObject(Ariticle.class)//确定返回数据类型 实体bean ariticle
+//                .as(RxLife.asOnMain(this))
+//                .subscribe(ariticle -> {
+//                    Log.d("RxHttp", "回调成功" + ariticle.getData().getDatas().get(0).getShareUser());
+//                }, throwable -> {
+//                    Log.d("RxHttp", "回调失败" + throwable.getMessage());
+//                });
+
         RxHttp.get("wxarticle/list/%1$d/%2$d/json", 480, 1).setDomainTozzqIfAbsent()
-                .asObject(Ariticle.class)//确定返回数据类型 实体bean ariticle
+                .asResult(Ariticle.DataBean.class)//确定返回数据类型 实体bean ariticle
                 .as(RxLife.asOnMain(this))
-                .subscribe(ariticle -> {
-                    Log.d("RxHttp", "回调成功" + ariticle.getData().getDatas().get(0).getShareUser());
+                .subscribe(dataBean  -> {
+                    Log.d("RxHttp", "回调成功" + dataBean.getDatas().get(0).getLink());
                 }, throwable -> {
                     Log.d("RxHttp", "回调失败" + throwable.getMessage());
                 });
