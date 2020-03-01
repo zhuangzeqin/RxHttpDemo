@@ -14,6 +14,62 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        />
 
+    <LinearLayout
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.eeepay.zzq.rxhttpdemo.ItemEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelText="账户类型"
+            app:hintText=""
+            app:editText="对私账户"
+            app:isEdit="false"
+            app:isNumber="false"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FFF3F3F3"
+            />
+        <com.eeepay.zzq.rxhttpdemo.ItemEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelText="开户名称"
+            app:editText="庄泽钦"
+            app:hintText=""
+            app:isEdit="false"
+            app:isNumber="false"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="#FFF3F3F3"
+            />
+        <com.eeepay.zzq.rxhttpdemo.ItemEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelText="卡片认证"
+            app:hintText="请输入商户编号"
+            app:isNumber="false"
+            />
+        <com.eeepay.zzq.rxhttpdemo.ItemEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelText="卡片认证"
+            app:hintText="请输入商户编号"
+            app:isNumber="false"
+            />
+    </LinearLayout>
+    <!--app:hintText="请输入商户编号"
+    app:isNumber="false"
+    app:labelText="商户编号"
+    app:labelTextColor="@color/unify_txt_color_gray"-->
 </androidx.constraintlayout.widget.ConstraintLayout>

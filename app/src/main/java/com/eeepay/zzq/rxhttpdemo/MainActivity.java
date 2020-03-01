@@ -64,7 +64,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         btn_test = (Button) this.findViewById(R.id.btn_test);
-        btn_test.setOnClickListener(this);
+        btn_test.setOnClickListener(v -> {
+
+        });
     }
 
     private void getTestInfo1() {
