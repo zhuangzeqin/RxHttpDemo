@@ -9,6 +9,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.eeepay.zzq.rxhttpdemo.bean.Ariticle;
+import com.eeepay.zzq.rxhttpdemo.bean.LoginInfo;
+import com.eeepay.zzq.rxhttpdemo.enc.EncRSA;
+import com.eeepay.zzq.rxhttpdemo.utils.Utils;
 import com.rxjava.rxlife.RxLife;
 
 import java.io.IOException;
@@ -55,14 +58,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Utils.init(this);
+        RxHttpManager.init();//初始化操作
         //设置debug模式，默认为false，设置为true后，发请求，过滤"RxHttp"能看到请求日志
-        RxHttp.setDebug(true);
+//        RxHttp.setDebug(true);
 //非必须,只能初始化一次，第二次将抛出异常
 //        RxHttp.init(OkHttpClient okHttpClient)
 //或者，调试模式下会有日志输出
 //        RxHttp.init(OkHttpClient okHttpClient, boolean debug)
-
-
         btn_test = (Button) this.findViewById(R.id.btn_test);
         btn_test.setOnClickListener(this);
     }
@@ -73,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         hashMap.put("timestamp", "1462377600");
         hashMap.put("type", 1);
         hashMap.put("client", "ceshi");
-        RxHttp.postEncryptForm("calendar/vacations").test(88,78).
+        RxHttp.postEncryptForm("calendar/vacations").test(88, 78).
                 add("token", "A2E0C3CDEA081D3BFC34F8FE23A15886").//通过add 方式添加参数
                 addAll(hashMap).//也可以通过map 添加参数
                 asString().
@@ -98,15 +101,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_test:
-                getTestInfo1();
+//                getTestInfo1();
 //                Presenter.with(this).build().reqestTestModel();
 //                setDomainUrl();
 //                getAriticle();
+                testLogin();
+                getAriticle();
                 break;
             default:
 
                 break;
         }
+    }
+
+    private void testLogin() {
+//        Map<String, String> pubParams = new HashMap<>(3);
+//        pubParams.put("agent_no", "");//当前登录代理商编号,必填
+//        pubParams.put("agentNo", "");//当前登录代理商编号,必填 后台定义的字段不一样
+//        pubParams.put("curAgentNo", "");//当前登录代理商编号,必填 后台定义的字段不一样
+        String encpassword = "";
+        try {
+            encpassword = EncRSA.EncPass("abc888888");//RSA 加密密码
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+        RxHttp.postJson("agentApi2/login").setDomainTosdb_testIfAbsent().
+                add("userName", "13888888888").
+                add("password", encpassword).
+                add("agentOem", "200010")
+                .asResultCallBack(LoginInfo.DataBean.class)
+                .as(RxLife.asOnMain(this))
+                .subscribe(dataBean -> {
+                    Log.d("RxHttp", "回调成功" + dataBean.toString());
+                }, throwable -> {
+                    Log.d("RxHttp", "回调失败" + throwable.getMessage());
+                });
     }
 
     /**
@@ -126,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         RxHttp.get("wxarticle/list/%1$d/%2$d/json", 480, 1).setDomainTozzqIfAbsent()
                 .asResult(Ariticle.DataBean.class)//确定返回数据类型 实体bean ariticle
                 .as(RxLife.asOnMain(this))
-                .subscribe(dataBean  -> {
+                .subscribe(dataBean -> {
                     Log.d("RxHttp", "回调成功" + dataBean.getDatas().get(0).getLink());
                 }, throwable -> {
                     Log.d("RxHttp", "回调失败" + throwable.getMessage());
@@ -147,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setPubParam();
 
     }
+
     //设置公共参数，请求头
     //我们需要调用RxHttp.setOnParamAssembly(Function)方法，并传入一个Function接口对象，每次发起请求，都会回调该接口。
     private void setPubParam() {
