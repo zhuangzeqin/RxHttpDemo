@@ -14,53 +14,67 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import okhttp3.RequestBody;
+import okhttp3.HttpUrl;
 import rxhttp.wrapper.annotation.Param;
-import rxhttp.wrapper.param.JsonParam;
+import rxhttp.wrapper.entity.KeyValuePair;
 import rxhttp.wrapper.param.Method;
+import rxhttp.wrapper.param.NoBodyParam;
 import rxhttp.wrapper.utils.GsonUtil;
 
 /**
- * 描述：postJson请求，需要将所有的参数，也就是json字符串加密后再发送出去
+ * 描述： 加密get请求
  * 作者：zzq
  * 时间：2020/2/27 11:11
  * 邮箱：1546374673@qq.com
  */
-@Param(methodName = "postEncryptJson")
-public class PostEncryptJsonParam  extends JsonParam {
+@Param(methodName = "getEncrypt")
+public class GetEncryptJsonParam extends NoBodyParam {
     //再拼接的字符串后加上key=46940880d9f79f27bb7f85ca67102bfdylkj@@agentapi2#$$^&pretty
     private static final String KEY_VALUE = "key=46940880d9f79f27bb7f85ca67102bfdylkj@@agentapi2#$$^&pretty";
+
     /**
-     * @param url    请求路径
-     * Method#POST  Method#PUT  Method#DELETE  Method#PATCH
+     * @param url 请求路径
+     *            Method#POST  Method#PUT  Method#DELETE  Method#PATCH
      */
-    public PostEncryptJsonParam(String url) {
-        super(url, Method.POST);
+    public GetEncryptJsonParam(String url) {
+        super(url, Method.GET);
     }
 
     @Override
-    public RequestBody getRequestBody() {
+    public HttpUrl getHttpUrl() {
+//        StringBuilder paramsBuilder = new StringBuilder(); //存储加密后的参数
         //这里拿到你添加的所有参数
         TreeMap<String, Object> rootMap = new TreeMap<>();
-        String app_info = "";
-        Map<String, Object> params = getParams();
-        Iterator iter = params.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            // 获取key
-            String key = (String) entry.getKey();
-            // 获取value
-            Object value1 = entry.getValue();
-            rootMap.put(key,value1);
+//        //通过请求地址(最初始的请求地址)获取到参数列表
+//        Set<String> parameterNames = getHttpUrl().queryParameterNames();
+//        for (String key : parameterNames) {  //循环参数列表
+//            rootMap.put(key, getHttpUrl().queryParameter(key));
+//        }
+
+        for (KeyValuePair pair : getKeyValuePairs()) {
+            //这里遍历所有添加的参数，可对参数进行加密操作
+            String key = pair.getKey();
+            String value = pair.getValue().toString();
+            rootMap.put(key, value);
         }
         //根据上面拿到的参数，自行实现加密逻辑
-        app_info = signInfo(rootMap);//加密后的字符串
+        String app_info = signInfo(rootMap);//加密后的字符串
         addHeader("app-info", app_info);
-        return super.getRequestBody();
+//        //加密逻辑自己写
+//        //通过请求地址(最初始的请求地址)获取到参数列
+//        String app_info = signInfo(rootMap);
+////        addHeader("app-info", app_info);
+//        String simpleUrl = getSimpleUrl();  //拿到请求Url
+//        if (getKeyValuePairs().size() == 0) return HttpUrl.get(simpleUrl);
+//        return HttpUrl.get(simpleUrl + "?" + app_info);  //将加密后的参数和url组拼成HttpUrl对象并返回
+        return super.getHttpUrl();
     }
+
+
     /**
      * zhuangzeqin 2020年3月5日16:25:25
      * 签名构建信息
+     *
      * @param rootMap
      * @return
      */
@@ -119,6 +133,7 @@ public class PostEncryptJsonParam  extends JsonParam {
         String app_info = getAppDeviceInfo(sign, timestamp);
         return app_info;
     }
+
     /**
      * 公共参数转换为json 字符串
      *
@@ -146,13 +161,14 @@ public class PostEncryptJsonParam  extends JsonParam {
             appDeviceInfo.setJpushDevice("123456");//获取极光推送的注册的id
             String jsonData = GsonUtil.toJson(appDeviceInfo);//公共参数转换为json 字符串
             //最好编码一下； 防止乱码
-            String encode = URLEncoder.encode(jsonData,"UTF-8");//App传递给后台时候编码
+            String encode = URLEncoder.encode(jsonData, "UTF-8");//App传递给后台时候编码
             return encode;
         } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
     }
+
     /**
      * 返回安卓设备ID
      */

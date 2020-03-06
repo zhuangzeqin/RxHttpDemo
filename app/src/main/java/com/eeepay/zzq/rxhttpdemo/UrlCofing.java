@@ -17,7 +17,7 @@ public class UrlCofing {
     public static String wanandroid = "https://www.wanandroid.com/";//动态域名地址；非默认域名，并取别名为BaseUrlWanandroid 有时我们需要跟不同的后台人员调试，这时候就可以用到动态域名
     //以后测试环境打包的APP地址用这个阿里云外网域名地址
     @Domain(name = "sdb_test")
-    public static final String AGENTAPI2_BASEURL = "http://agentapi2.sqianbao.cn/";
+    public static final String AGENTAPI2_BASEURL = "http://cs-ys-agentapi2.51ydmw.com/";
 
 
 }

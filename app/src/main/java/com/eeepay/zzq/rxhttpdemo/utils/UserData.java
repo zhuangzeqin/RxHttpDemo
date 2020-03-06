@@ -252,4 +252,27 @@ public final class UserData implements Serializable {
 //        PreferenceUtils.removeKey(USER_INFO);
     }
 
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", agentOem='" + agentOem + '\'' +
+                ", loginToken='" + loginToken + '\'' +
+                ", userId='" + userId + '\'' +
+                ", agentNo='" + agentNo + '\'' +
+                ", agentNode='" + agentNode + '\'' +
+                ", agentName='" + agentName + '\'' +
+                ", agentLevel=" + agentLevel +
+                ", parentId='" + parentId + '\'' +
+                ", oneLevelId='" + oneLevelId + '\'' +
+                ", mobilePhone='" + mobilePhone + '\'' +
+                ", manage='" + manage + '\'' +
+                ", lockTime='" + lockTime + '\'' +
+                ", wrongPasswordCount=" + wrongPasswordCount +
+                ", oneAgentNo='" + oneAgentNo + '\'' +
+                ", teamId='" + teamId + '\'' +
+                ", isLogin=" + isLogin +
+                '}';
+    }
 }

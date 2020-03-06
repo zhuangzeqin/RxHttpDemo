@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.eeepay.zzq.rxhttpdemo.bean.Ariticle;
 import com.eeepay.zzq.rxhttpdemo.bean.LoginInfo;
 import com.eeepay.zzq.rxhttpdemo.enc.EncRSA;
+import com.eeepay.zzq.rxhttpdemo.utils.UserData;
 import com.eeepay.zzq.rxhttpdemo.utils.Utils;
 import com.rxjava.rxlife.RxLife;
 
@@ -52,7 +53,7 @@ import rxhttp.wrapper.parse.SimpleParser;
  */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button btn_test;
+    private Button btn_test, btn_test2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +68,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //或者，调试模式下会有日志输出
 //        RxHttp.init(OkHttpClient okHttpClient, boolean debug)
         btn_test = (Button) this.findViewById(R.id.btn_test);
+        btn_test2 = (Button) this.findViewById(R.id.btn_test2);
         btn_test.setOnClickListener(this);
+        btn_test2.setOnClickListener(this);
     }
 
     private void getTestInfo1() {
@@ -106,7 +109,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                setDomainUrl();
 //                getAriticle();
                 testLogin();
-                getAriticle();
+                break;
+            case R.id.btn_test2:
+                testGetRequest();
                 break;
             default:
 
@@ -115,10 +120,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void testLogin() {
-//        Map<String, String> pubParams = new HashMap<>(3);
-//        pubParams.put("agent_no", "");//当前登录代理商编号,必填
-//        pubParams.put("agentNo", "");//当前登录代理商编号,必填 后台定义的字段不一样
-//        pubParams.put("curAgentNo", "");//当前登录代理商编号,必填 后台定义的字段不一样
         String encpassword = "";
         try {
             encpassword = EncRSA.EncPass("abc888888");//RSA 加密密码
@@ -126,14 +127,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
             return;
         }
-        RxHttp.postJson("agentApi2/login").setDomainTosdb_testIfAbsent().
+        //1 通过自定义参数注解@Param进行加密 postJson请求，需要将所有的参数，也就是json字符串加密后再发送出去
+        //2 通拦截器 拦截所有的参数进行加密
+        RxHttp.postEncryptJson("agentApi2/login").setDomainTosdb_testIfAbsent().
                 add("userName", "13888888888").
                 add("password", encpassword).
                 add("agentOem", "200010")
                 .asResultCallBack(LoginInfo.DataBean.class)
                 .as(RxLife.asOnMain(this))
-                .subscribe(dataBean -> {
-                    Log.d("RxHttp", "回调成功" + dataBean.toString());
+                .subscribe(response -> {
+                    //保存用户信息到sp里
+                    UserData userData = UserData.getInstance();
+                    userData.setUserName(response.getUserName());//用户名 前海移联直营
+                    userData.setPassword(response.getPassword());//密码
+                    userData.setAgentOem(response.getAgentOem());//组织ID 200010
+                    userData.setUserId(response.getUserId());//用户id 1000000000000002897
+                    userData.setAgentNo(response.getAgentNo());//代理商编号 1446
+                    userData.setAgentNode(response.getAgentNode());//代理商节点 0-1446-
+                    userData.setAgentName(response.getAgentName());//代理商名称 E前海移联直营read
+                    userData.setLoginToken(response.getLoginToken());//登录的token 57005982-4283-43c8-a776-96f974d3dc4c
+                    userData.setAgentLevel(response.getAgentLevel());//代理商级别 1
+                    userData.setParentId(response.getParentId());//父id
+                    userData.setOneLevelId(response.getOneLevelId());//一级等级id
+                    userData.setMobilePhone(response.getMobilePhone());//手机号
+                    userData.setManage(response.getManage());//角色管理 1
+                    userData.setLockTime(response.getLockTime());//锁住时间
+                    userData.setWrongPasswordCount(response.getWrongPasswordCount());//密码错误次数 0
+                    userData.setOneAgentNo(response.getOneAgentNo());//一级代理商编号
+                    userData.setTeamId(response.getTeamId());//组织iD
+                    userData.setLogin(true);//是否登录过
+                    Toast.makeText(this, userData.toString(), Toast.LENGTH_SHORT).show();
+                }, throwable -> {
+                    Log.d("RxHttp", "登录失败" + throwable.getLocalizedMessage());
+                });
+    }
+
+    private void testGetRequest() {
+        RxHttp.getEncrypt("agentApi2/terminalApplyRecord/countTerminalApplyRecord/%s", UserData.getInstance().getAgentNo()).setDomainTosdb_testIfAbsent()
+                .asString()
+                .as(RxLife.asOnMain(this))
+                .subscribe(s -> {
+                    Log.d("RxHttp", "回调成功" + s);
                 }, throwable -> {
                     Log.d("RxHttp", "回调失败" + throwable.getMessage());
                 });
