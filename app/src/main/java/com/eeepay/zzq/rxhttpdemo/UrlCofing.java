@@ -15,6 +15,9 @@ public class UrlCofing {
     public static String baseUlr = "http://co-api.51wnl.com/";//默认的域名地址
     @Domain(name = "zzq")/** ------注释说明--通过@Domain()注解标注非默认域名，就会在RxHttp类中生成setDomainToXxxIfAbsent()方法，其中Xxx就是注解中取的别名。------ **/
     public static String wanandroid = "https://www.wanandroid.com/";//动态域名地址；非默认域名，并取别名为BaseUrlWanandroid 有时我们需要跟不同的后台人员调试，这时候就可以用到动态域名
+    //以后测试环境打包的APP地址用这个阿里云外网域名地址
+    @Domain(name = "sdb_test")
+    public static final String AGENTAPI2_BASEURL = "http://agentapi2.sqianbao.cn/";
 
 
 }
