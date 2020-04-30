@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
+import rxhttp.wrapper.callback.Function;
 import rxhttp.wrapper.param.Method;
 import rxhttp.wrapper.param.RxHttp;
 import rxhttp.wrapper.parse.SimpleParser;
@@ -245,7 +245,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          *
          */
         RxHttp.setResultDecoder(new Function<String, String>() {
-            //每次请求成功，都会回调这里，并传入请求返回的密文
             @Override
             public String apply(String s) throws Exception {
                 String plaintext = "decode(s)";   //将密文解密成明文，解密逻辑自己实现
