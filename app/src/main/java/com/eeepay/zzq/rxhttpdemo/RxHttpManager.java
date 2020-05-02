@@ -12,9 +12,9 @@ import com.eeepay.zzq.rxhttpdemo.utils.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -28,8 +28,8 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okio.Buffer;
+import rxhttp.wrapper.param.Method;
 import rxhttp.wrapper.param.RxHttp;
 
 /**
@@ -44,6 +44,7 @@ public final class RxHttpManager {
     private static final String KEY_VALUE = "key=46940880d9f79f27bb7f85ca67102bfdylkj@@agentapi2#$$^&pretty";
     //Gson 处理Null 值的问题
     private static final Gson GSON = new GsonBuilder().registerTypeAdapterFactory(new NullToEmptyAdapterFactory()).create();
+
     public static void init() {
         OkHttpClient client = new OkHttpClient.Builder()
 //                .cookieJar(new CookieStore(file))
@@ -62,6 +63,17 @@ public final class RxHttpManager {
                 .build();
         //RxHttp初始化，自定义OkHttpClient对象，非必须
         RxHttp.init(client, BuildConfig.DEBUG);
+        RxHttp.setOnParamAssembly(param -> {
+            Method method =param.getMethod();//请求的方法 是get or post
+            Map<String, String> pubParams = new HashMap<>(3);
+            if (method.isPost()) {
+                pubParams.put("agent_no", UserData.getInstance().getAgentNo());//当前登录代理商编号,必填
+                pubParams.put("agentNo", UserData.getInstance().getAgentNo());//当前登录代理商编号,必填 后台定义的字段不一样
+                pubParams.put("curAgentNo", UserData.getInstance().getAgentNo());//当前登录代理商编号,必填 后台定义的字段不一样
+                return param.addAll(pubParams);//添加公共请求参数
+            }
+            return param;
+        });
         //设置缓存策略，非必须
 //        File file = new File(context.getExternalCacheDir(), "RxHttpCache");
 //        RxHttpPlugins.setCache(file, 1000 * 100, CacheMode.REQUEST_NETWORK_FAILED_READ_CACHE);
@@ -138,56 +150,53 @@ public final class RxHttpManager {
      * [注意]参数值为空的话忽略
      * 参考登陆接口的api文档说明
      */
-//    HashMap<String, Object> rootMap = new HashMap<>();
-    final static Interceptor mHeader = new Interceptor() {
-        @Override
-        public Response intercept(Chain chain) throws IOException {
-            //在这里获取到request后就可以做任何事情了
-            Request request = chain.request();
-            String isSkip = request.header("isSkip");//是否跳过验证 10086 跳过
-            //这个是请求的url，也就是咱们前面配置的baseUrl
-            HttpUrl httpUrlurl = request.url();
-            //这个是请求方法
-            String method = request.method();
-            //获取请求body，只有@Body 参数的requestBody 才不会为 null
-            RequestBody requestBody = request.body();
-            TreeMap<String, Object> rootMap = new TreeMap<>();
-            rootMap.clear();
-            if (!TextUtils.isEmpty(isSkip) && TextUtils.equals(isSkip, "10086")) {
-                ///是否跳过验证 10086 跳过
-                request = signInfo(request, rootMap);
-            } else {
-                if (method.equals("POST")) {
-                    if (requestBody instanceof FormBody) {//FormBody--表单数据提交
-                        for (int i = 0; i < ((FormBody) requestBody).size(); i++) {
-                            rootMap.put(((FormBody) requestBody).encodedName(i), ((FormBody) requestBody).encodedValue(i));
-                        }
-                    } else {
-                        //buffer流
-                        Buffer buffer = new Buffer();
-                        requestBody.writeTo(buffer);
-                        String oldParamsJson = buffer.readUtf8();
-                        rootMap = GSON.fromJson(oldParamsJson, TreeMap.class);  //原始参数
-                        if (rootMap == null) {
-                            rootMap = new TreeMap<>();
-                        }
-                        buffer.flush();
-                        buffer.close();
-                        buffer.clear();
+//
+    final static Interceptor mHeader = chain -> {
+        //在这里获取到request后就可以做任何事情了
+        Request request = chain.request();
+        String isSkip = request.header("isSkip");//是否跳过验证 10086 跳过
+        //这个是请求的url，也就是咱们前面配置的baseUrl
+        HttpUrl httpUrlurl = request.url();
+        //这个是请求方法
+        String method = request.method();
+        //获取请求body，只有@Body 参数的requestBody 才不会为 null
+        RequestBody requestBody = request.body();
+        TreeMap<String, Object> rootMap = new TreeMap<>();
+        rootMap.clear();
+        if (!TextUtils.isEmpty(isSkip) && TextUtils.equals(isSkip, "10086")) {
+            ///是否跳过验证 10086 跳过
+            request = signInfo(request, rootMap);
+        } else {
+            if (method.equals("POST")) {
+                if (requestBody instanceof FormBody) {//FormBody--表单数据提交
+                    for (int i = 0; i < ((FormBody) requestBody).size(); i++) {
+                        rootMap.put(((FormBody) requestBody).encodedName(i), ((FormBody) requestBody).encodedValue(i));
                     }
-                    request = signInfo(request, rootMap);
-                } else if (method.equals("GET")) {
-                    //通过请求地址(最初始的请求地址)获取到参数列表
-                    Set<String> parameterNames = httpUrlurl.queryParameterNames();
-                    for (String key : parameterNames) {  //循环参数列表
-                        rootMap.put(key, httpUrlurl.queryParameter(key));
+                } else {
+                    //buffer流
+                    Buffer buffer = new Buffer();
+                    requestBody.writeTo(buffer);
+                    String oldParamsJson = buffer.readUtf8();
+                    rootMap = GSON.fromJson(oldParamsJson, TreeMap.class);  //原始参数
+                    if (rootMap == null) {
+                        rootMap = new TreeMap<>();
                     }
-                    request = signInfo(request, rootMap);
+                    buffer.flush();
+                    buffer.close();
+                    buffer.clear();
                 }
+                request = signInfo(request, rootMap);
+            } else if (method.equals("GET")) {
+                //通过请求地址(最初始的请求地址)获取到参数列表
+                Set<String> parameterNames = httpUrlurl.queryParameterNames();
+                for (String key : parameterNames) {  //循环参数列表
+                    rootMap.put(key, httpUrlurl.queryParameter(key));
+                }
+                request = signInfo(request, rootMap);
             }
-//            return chain.proceed(request).newBuilder().build();
-            return chain.proceed(request);
         }
+//            return chain.proceed(request).newBuilder().build();
+        return chain.proceed(request);
     };
 
     /**
@@ -294,6 +303,7 @@ public final class RxHttpManager {
             return "";
         }
     }
+
     // 获得软件版本名
     private static String getVersionName() {
         String versionname = "unknow";
