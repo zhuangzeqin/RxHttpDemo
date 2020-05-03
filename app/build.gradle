@@ -14,6 +14,8 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [rxhttp_rxjava: 'rxjava2']  //可传入rxjava2、rxjava3
+                //添加如下配置 开启annotation processor
+                includeCompileClasspath true
             }
         }
     }
@@ -38,6 +40,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     //**********************************************RXHttp 框架所需要的一些类库**********************************************
+    implementation 'org.projectlombok:lombok:1.16.8'//添加lombok依赖
+    implementation 'org.glassfish:javax.annotation:10.0-b28'//java注解
+
     //if you use AndroidX
     implementation 'androidx.multidex:multidex:2.0.1'
 //    implementation 'com.rxjava.rxhttp:rxhttp:2.1.1' //必须

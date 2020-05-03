@@ -10,12 +10,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.eeepay.zzq.rxhttpdemo.bean.Ariticle;
 import com.eeepay.zzq.rxhttpdemo.bean.LoginInfo;
+import com.eeepay.zzq.rxhttpdemo.bean.TestLombok;
+import com.eeepay.zzq.rxhttpdemo.bean.User;
 import com.eeepay.zzq.rxhttpdemo.enc.EncRSA;
 import com.eeepay.zzq.rxhttpdemo.utils.UserData;
 import com.eeepay.zzq.rxhttpdemo.utils.Utils;
 import com.rxjava.rxlife.RxLife;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -71,6 +74,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_test2 = (Button) this.findViewById(R.id.btn_test2);
         btn_test.setOnClickListener(this);
         btn_test2.setOnClickListener(this);
+        User user = User.builder().age(31).name("zhuangzeqin").
+                price(new BigDecimal(2546389)).testhobbies("123").testhobbies("456").build();//        Log.d("user",user.toString());
+        Log.d("user", user.toString());
+        user.start();
+//        TestLombok testLombok = new TestLombok(50,"edcddd");
+//        testLombok.setId(36);
+//        testLombok.setName("abc");
+//        Log.d("user",testLombok.toString());
+        TestLombok yangbaohong = TestLombok.testmenthod(36, "yangbaohong");
+        Log.d("user", yangbaohong.toString());
     }
 
     private void getTestInfo1() {

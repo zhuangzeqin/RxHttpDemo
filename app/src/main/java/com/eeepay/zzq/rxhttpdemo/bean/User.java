@@ -1,5 +1,16 @@
 package com.eeepay.zzq.rxhttpdemo.bean;
 
+import android.util.Log;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
+import lombok.ToString;
+
 /**
  * 描述：class describe
  * 作者：zhuangzeqin
@@ -7,37 +18,21 @@ package com.eeepay.zzq.rxhttpdemo.bean;
  * 邮箱：zzq@eeepay.cn
  * 备注:
  */
+@Builder(toBuilder = true)//@Builder声明实体，表示可以进行Builder方式初始化
+@Getter
+@ToString
 public class User {
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public User(String name, int age) {
-        this.name = name;
-        this.age = age;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
-    }
-
     private String name;
     private int age;
+    private BigDecimal price;
+    @Builder.ObtainVia(field = "id")
+    private final String id = UUID.randomUUID().toString();
+    @Builder.ObtainVia(field = "insertTime")
+    private final long insertTime = System.currentTimeMillis();
+    @Singular(value = "testhobbies")
+    private List<String> hobbies;
 
+    public void start() {
+        Log.d("user", "调用了start方法");
+    }
 }
