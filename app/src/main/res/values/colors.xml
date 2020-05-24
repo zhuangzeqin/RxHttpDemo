@@ -7,4 +7,5 @@
     <color name="item_label_color">#FF585858</color>
     <color name="item_editxt_color">#FF333333</color>
     <color name="item_hit_color">#FFC7C7C7</color>
+    <color name="whilte">#ffffff</color>
 </resources>

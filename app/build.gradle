@@ -44,6 +44,7 @@ dependencies {
     implementation 'org.glassfish:javax.annotation:10.0-b28'//java注解
 
     //if you use AndroidX
+    implementation 'org.apache.commons:commons-text:1.1'
     implementation 'androidx.multidex:multidex:2.0.1'
 //    implementation 'com.rxjava.rxhttp:rxhttp:2.1.1' //必须
 //    annotationProcessor 'com.rxjava.rxhttp:rxhttp-compiler:2.1.1' //注解处理器，生成RxHttp类,必须

@@ -17,6 +17,8 @@ import com.eeepay.zzq.rxhttpdemo.utils.UserData;
 import com.eeepay.zzq.rxhttpdemo.utils.Utils;
 import com.rxjava.rxlife.RxLife;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -124,12 +126,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 testLogin();
                 break;
             case R.id.btn_test2:
-                testGetRequest();
+                tojson();
+//                testGetRequest();
                 break;
             default:
 
                 break;
         }
+    }
+
+
+    private void tojson() {
+        String str1 = "{\"resourceId\":\"dfead70e4ec5c11e43514000ced0cdcaf\",\"properties\":{\"process_id\":\"process4\",\"name\":\"\",\"documentation\":\"\",\"processformtemplate\":\"\"}}";
+        System.out.println("tmp1:" + str1);
+//        String tmp = StringEscapeUtils.unescapeJava(str1);
+        String tmp = StringEscapeUtils.unescapeJson(str1);
+        System.out.println("tmp2:" + tmp);
+
+//        String tmp = StringEscapeUtils.unescapeJson(jsonData);
+
     }
 
     private void testLogin() {
