@@ -11,11 +11,11 @@ import rxhttp.wrapper.parse.AbstractParser;
 //通过@Parser注解，为解析器取别名为Result，此时就会在RxHttp类生成asResult(Class<T>)方法
 @Parser(name = "Result")
 public class ResultParse<T> extends AbstractParser<T> {
-    public ResultParse() {
+    protected ResultParse() {
         super();
     }
 
-    public ResultParse(Class<T> type) {
+    public ResultParse(Type type) {
         super(type);
     }
 

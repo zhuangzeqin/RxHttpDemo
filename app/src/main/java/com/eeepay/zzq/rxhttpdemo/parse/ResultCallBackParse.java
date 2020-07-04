@@ -16,11 +16,11 @@ import rxhttp.wrapper.parse.AbstractParser;
 //通过@Parser注解，为解析器取别名为Result，此时就会在RxHttp类生成asResult(Class<T>)方法
 @Parser(name = "ResultCallBack")
 public class ResultCallBackParse<T> extends AbstractParser<T> {
-    public ResultCallBackParse() {
+    protected ResultCallBackParse() {
         super();
     }
 
-    public ResultCallBackParse(Class<T> type) {
+    public ResultCallBackParse(Type type) {
         super(type);
     }
 

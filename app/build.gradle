@@ -13,7 +13,10 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [rxhttp_rxjava: 'rxjava2']  //可传入rxjava2、rxjava3
+                arguments = [rxhttp_rxjava: 'rxjava2',
+                             rxhttp_okhttp: '3.14.4'
+
+                ]  //可传入rxjava2、rxjava3
                 //添加如下配置 开启annotation processor
                 includeCompileClasspath true
             }
@@ -53,8 +56,9 @@ dependencies {
 //    implementation 'com.rxjava.rxlife:rxlife-x:2.0.0'
     implementation project(path: ':lib_common')
     //必须
-    implementation 'com.ljx.rxhttp:rxhttp:2.2.1'
-    annotationProcessor 'com.ljx.rxhttp:rxhttp-compiler:2.2.1' //生成RxHttp类
+    implementation 'com.ljx.rxhttp:rxhttp:2.2.7'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.4' //rxhttp v2.2.2版本起，需要手动依赖okhttp
+    annotationProcessor 'com.ljx.rxhttp:rxhttp-compiler:2.2.7' //生成RxHttp类
     //rxjava2
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
